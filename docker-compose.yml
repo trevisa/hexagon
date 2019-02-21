@@ -10,3 +10,7 @@ services:
       - "2181:2181"
       - "9092:9092"
     image: "spotify/kafka"
+  mongodb:
+    ports:
+      - "27017:27017"
+    image: "mongo:3.4"
