@@ -3,13 +3,11 @@ package com.trevisa.hexagon.onboarding.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.kafka.common.metrics.Stat;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 @Data
 public class Registration {

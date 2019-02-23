@@ -1,2 +1,4 @@
 rootProject.name = 'hexagon'
 include 'hexagon-onboarding'
+include 'hexagon-auth'
+include 'hexagon-ledger'
