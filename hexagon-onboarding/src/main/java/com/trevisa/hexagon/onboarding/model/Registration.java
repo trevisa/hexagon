@@ -1,16 +1,18 @@
 package com.trevisa.hexagon.onboarding.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDate;
-import java.util.function.BiConsumer;
 
 @Data
-public class Registration {
+@EqualsAndHashCode(callSuper = false)
+public class Registration extends AbstractAggregateRoot<Registration> {
 
     @Id
     private ObjectId id;
@@ -24,7 +26,7 @@ public class Registration {
         this.status = Status.PENDING_REQUIREMENTS;
     }
 
-    public void transitionState(BiConsumer<Status, Status> consumer) {
+    public void transitionState() {
         if (fullName != null
                 && document != null
                 && document.getType() != null
@@ -32,10 +34,8 @@ public class Registration {
                 && dateOfBirth != null
                 && countryOfBirth != null
                 && (status == null || Status.PENDING_REQUIREMENTS.equals(status))) {
-            var currentStatus = this.getStatus();
             this.setStatus(Status.AWAITING_ANALYSIS);
-
-            consumer.accept(currentStatus, this.getStatus());
+            this.registerEvent(new RegistrationCreated(this.getId()));
         }
     }
 

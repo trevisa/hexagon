@@ -1,6 +1,5 @@
 package com.trevisa.hexagon.onboarding.service;
 
-import com.trevisa.hexagon.onboarding.RegistrationData;
 import com.trevisa.hexagon.onboarding.model.Registration;
 import reactor.core.publisher.Mono;
 

@@ -1,12 +1,10 @@
 package com.trevisa.hexagon.onboarding.service;
 
-import com.trevisa.hexagon.onboarding.RegistrationData;
 import com.trevisa.hexagon.onboarding.model.Countries;
 import com.trevisa.hexagon.onboarding.model.Registration;
 import com.trevisa.hexagon.onboarding.repository.RegistrationRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -15,12 +13,12 @@ import reactor.core.publisher.Mono;
 public class RegistrationServiceImpl implements RegistrationService {
 
     private final RegistrationRepository registrationRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public Mono<Registration> create(RegistrationData registrationData) {
-        var registration = updateRegistration(new Registration(), registrationData);
-        return registrationRepository.save(registration);
+        return createEmpty()
+                .map(registration -> updateRegistration(registration, registrationData))
+                .flatMap(registrationRepository::save);
     }
 
     @Override
@@ -28,6 +26,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         return registrationRepository.findById(new ObjectId(id))
                 .map(registration -> updateRegistration(registration, registrationData))
                 .flatMap(registrationRepository::save);
+    }
+
+    private Mono<Registration> createEmpty() {
+        return registrationRepository.save(new Registration());
     }
 
     private Registration updateRegistration(Registration registration, RegistrationData registrationData) {
@@ -67,9 +69,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             registration.setDateOfBirth(registrationData.getDateOfBirth());
         }
 
-        registration.transitionState((o, n) -> {
-            kafkaTemplate.send("registration-status-changed", String.format("%s->%s", o, n));
-        });
+        registration.transitionState();
 
         return registration;
     }

@@ -1,7 +1,8 @@
-package com.trevisa.hexagon.onboarding;
+package com.trevisa.hexagon.onboarding.controller;
 
 import com.trevisa.hexagon.onboarding.model.Registration;
 import com.trevisa.hexagon.onboarding.repository.RegistrationRepository;
+import com.trevisa.hexagon.onboarding.service.RegistrationData;
 import com.trevisa.hexagon.onboarding.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;

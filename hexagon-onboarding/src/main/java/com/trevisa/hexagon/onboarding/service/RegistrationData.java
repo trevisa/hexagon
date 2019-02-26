@@ -1,4 +1,4 @@
-package com.trevisa.hexagon.onboarding;
+package com.trevisa.hexagon.onboarding.service;
 
 import lombok.Data;
 
