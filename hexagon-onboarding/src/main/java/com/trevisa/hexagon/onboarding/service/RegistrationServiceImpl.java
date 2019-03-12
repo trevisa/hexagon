@@ -38,7 +38,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         if (registrationData.getFullName() != null) {
+            // TODO: validate full name
             registration.setFullName(registrationData.getFullName());
+        }
+
+        if (registrationData.getCountryOfResidence() != null) {
+            registration.setCountryOfResidence(Countries.fromAlpha2(registrationData.getCountryOfResidence()));
         }
 
         if (registrationData.getDocumentNumber() != null || registrationData.getDocumentType() != null) {
@@ -50,22 +55,28 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document = registration.getDocument();
             }
 
-            if (registrationData.getDocumentNumber() != null) {
-                document.setNumber(registrationData.getDocumentNumber());
-            }
-
             if (registrationData.getDocumentType() != null) {
                 document.setType(Registration.DocumentType.valueOf(registrationData.getDocumentType()));
+            }
+
+            if (document.getType() == null) {
+                throw new IllegalStateException("Can't set documentNumber without specifying the type first");
+            }
+
+            if (!document.getType().getCountry().equals(registration.getCountryOfResidence())) {
+                throw new IllegalArgumentException("Either the document type does not belong to the selected country of residence or the country is not set");
+            }
+
+            if (registrationData.getDocumentNumber() != null) {
+                // TODO: validate document number
+                document.setNumber(registrationData.getDocumentNumber());
             }
 
             registration.setDocument(document);
         }
 
-        if (registrationData.getCountryOfBirth() != null) {
-            registration.setCountryOfBirth(Countries.fromAlpha2(registrationData.getCountryOfBirth()));
-        }
-
         if (registrationData.getDateOfBirth() != null) {
+            // TODO: validate birth date
             registration.setDateOfBirth(registrationData.getDateOfBirth());
         }
 

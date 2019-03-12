@@ -6,6 +6,6 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 @Data
 @RequiredArgsConstructor(onConstructor = @__(@PersistenceConstructor))
-class Country {
+public class Country {
     private final String alpha2;
 }

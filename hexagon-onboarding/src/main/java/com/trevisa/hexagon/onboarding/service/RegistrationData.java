@@ -10,5 +10,5 @@ public class RegistrationData {
     private String documentType;
     private String documentNumber;
     private LocalDate dateOfBirth;
-    private String countryOfBirth;
+    private String countryOfResidence;
 }

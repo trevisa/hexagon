@@ -20,51 +20,41 @@ public class Registration extends AbstractAggregateRoot<Registration> {
     private String fullName;
     private Document document;
     private LocalDate dateOfBirth;
-    private Country countryOfBirth;
+    private Country countryOfResidence;
 
     public Registration() {
         this.status = Status.PENDING_REQUIREMENTS;
     }
 
-    public void transitionState() {
-        if (fullName != null
-                && document != null
-                && document.getType() != null
-                && document.getNumber() != null
-                && dateOfBirth != null
-                && countryOfBirth != null
-                && (status == null || Status.PENDING_REQUIREMENTS.equals(status))) {
-            this.setStatus(Status.AWAITING_ANALYSIS);
-            this.registerEvent(new RegistrationCreated(this.getId()));
-        }
+    public boolean canBeUpdated() {
+        return Status.PENDING_REQUIREMENTS.equals(this.status);
     }
 
-    public boolean canBeUpdated() {
-        return status == null || Status.PENDING_REQUIREMENTS.equals(status);
+    public void transitionState() {
+        if (this.getStatus().equals(Status.PENDING_REQUIREMENTS)) {
+            if (this.getFullName() != null &&
+                this.getDateOfBirth() != null &&
+                this.getCountryOfResidence() != null &&
+                this.getDocument() != null &&
+                this.getDocument().getType() != null &&
+                this.getDocument().getNumber() != null) {
+                this.setStatus(Status.AWAITING_ANALYSIS);
+                this.registerEvent(new RegistrationWaitingAnalysisEvent(this.getId()));
+            }
+        }
     }
 
     public enum Status {
         PENDING_REQUIREMENTS,
         AWAITING_ANALYSIS,
-        ACTIVE,
-        REJECTED,
-        CANCELLED,
+        ;
     }
-
 
     @Data
     @NoArgsConstructor
     public static class Document {
         private DocumentType type;
         private String number;
-
-        public Document(String documentType, String documentNumber) {
-            if (documentType != null) {
-                this.type = DocumentType.valueOf(documentType);
-            }
-
-            this.number = documentNumber;
-        }
     }
 
     @Getter
